@@ -1,0 +1,296 @@
+<script type="text/javascript">
+	const DOMAIN = "http://127.0.0.1:5000";
+</script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/0000000001.css">
+		<script src="js/0000000001.js"></script>
+		<script src="js/0000000002.js"></script>
+		<script src="js/0000000003.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="pragma" content="no-cache">
+		<meta charset="utf-8"><link rel="icon" href="img/icon.png">
+		<title>Chatbot</title>
+		<script type="text/javascript">document.addEventListener("contextmenu", event => event.preventDefault());</script>
+	</head>
+	<body id="body" style="display: none;">
+		<nav class="navbar navbar-expand-sm bg-dark">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link text-white" href="./bot_admin.html">Users</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-white" href="./bot_login.html">Logout</a>
+				</li>
+			</ul>
+		</nav>
+	<br>
+	<div class="container">
+		<input type="hidden" id="external_user_id" value="0">
+		<div class="form-group">
+			<div class="row">
+				<div class="col">
+					<select class="form-control" id="gender" onchange="alertFalse()">
+						<option value=""></option>
+						<option value="M">Male</option>
+						<option value="F">Feminine</option>
+					</select>
+				</div>
+				<div class="col">
+					<select class="form-control" id="administrator" onchange="alertFalse()">
+						<option value="0">Common user</option>
+						<option value="1">Administrator</option>
+					</select>
+				</div>
+				<div class="col">
+					<select class="form-control" id="activated" onchange="alertFalse()">
+						<option value="1">Activated</option>
+						<option value="0">Disabled</option>
+					</select>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col">
+					<input type="text" class="form-control" id="full_name" placeholder="Full name" onchange="alertFalse()">
+				</div>
+				<div class="col">
+					<input type="text" class="form-control" id="user_name" placeholder="User name" onchange="alertFalse()">
+				</div>
+				<div class="col">
+					<input type="text" class="form-control" id="password" placeholder="Password" onchange="alertFalse()">
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="row">
+				<div class="col">
+					<button class="btn btn-md btn-primary" onclick="New()">NEW</button>
+					<button class="btn btn-md btn-success" onclick="save()">SAVE</button>
+					<button class="btn btn-md btn-danger" data-toggle="modal" data-target="#dlDelete">DELETE</button>
+				</div>
+			</div>
+		</div>
+		<div style="overflow-y:scroll; height: 214.5px;">
+			<table class="table table-striped table-sm" width="100%">
+				<tbody id="lines">
+				</tbody>
+			</table>   
+		</div>					
+		<br>
+		<div class="alert alert-success alert-dismissible" id="alert" style="display: none;">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>SAVED!</strong> SUCCESSFULLY SAVED registration.
+		</div>
+	</div>
+	<div id="dlDelete" class="modal" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">DELETION</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<p>Confirm Deletion?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="Delete()">DELETE</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		async function topass() {
+			const admin_password = await prompt("Enter your administrator password");
+			if(admin_password!=null) {
+				if(admin_password.toString().trim().length>0) {login(admin_password);}
+				else {window.location.href = "./bot_home.html";}
+			}else {window.location.href = "./bot_home.html";}
+		}
+		topass();
+		const external_user_id = document.getElementById("external_user_id");
+		const full_name = document.getElementById("full_name");
+		const user_name = document.getElementById("user_name");
+		const password = document.getElementById("password");
+		const gender = document.getElementById("gender");
+		const administrator = document.getElementById("administrator");
+		const activated = document.getElementById("activated");
+		function login(_password="") {
+			const ROUTE = `${DOMAIN}/chatbot/selectPasswordUser`;
+			let params = {};
+			params.password = _password.toString().trim();
+			params.only_activated = true;
+			const strJSON = JSON.stringify(params);
+			const http = new XMLHttpRequest();
+			http.open("POST", ROUTE, true);
+			http.setRequestHeader("Content-Type", "application/json");
+			http.onreadystatechange = function() {
+				if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					try {
+						const objJSON = JSON.parse(http.responseText);
+						const _password1 = _password.toString().trim();
+						const _password2 = objJSON[0].password.toString().trim();
+						const _administrator = Number(objJSON[0].administrator.toString().trim());
+						if((_password1==_password2)&&(_administrator==1)) {
+							document.getElementById("body").style.display = "block";
+							list();
+						}else {window.location.href = "./bot_home.html";}
+					}catch(e) {
+						console.log("ERROR in object conversion:", e);
+						window.location.href = "./bot_home.html";
+					}
+				}
+			}
+			http.send(strJSON);
+		}
+		function list() {
+			const _external_user_id = external_user_id.value.toString().trim();
+			if(_external_user_id.length<=0) {_external_user_id = "0";}
+			const lines = document.getElementById("lines");
+			const ROUTE = `${DOMAIN}/chatbot/selectAllUsers`;
+			let params = {};
+			params.order_by = "full_name";
+			const strJSON = JSON.stringify(params);
+			const http = new XMLHttpRequest();
+			http.open("POST", ROUTE, true);
+			http.setRequestHeader("Content-Type", "application/json");
+			http.onreadystatechange = function() {
+				if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					const objJSON = JSON.parse(http.responseText);
+					if(objJSON.length>0) {
+						let strLines = "";
+						for(let i=0; i<objJSON.length; i++) {
+							let state = Number(objJSON[i].activated);
+							if(state<=0) {state = "Disabled";}
+							else {state = "Activated";}
+							strLines +=
+							`
+							<tr>
+								<td>${objJSON[i].full_name}</td>
+								<td align="center">${state}</td>
+								<td align="right">
+									<button class="btn btn-sm btn-light" onclick=select("${objJSON[i].str_id}")>select</button>
+								</td>
+							</tr>
+							`;
+						}
+						lines.innerHTML = strLines;
+					}						
+				}
+			}
+			http.send(strJSON);	
+		}
+		function select(_id="0") {
+			_id = _id.toString().trim();
+			if(_id.length<=0) {_id = "0";}
+			const ROUTE = `${DOMAIN}/chatbot/selectIDUser`;
+			let params = {};
+			params.id = _id;
+			const strJSON = JSON.stringify(params);
+			const http = new XMLHttpRequest();
+			http.open("POST", ROUTE, true);
+			http.setRequestHeader("Content-Type", "application/json");
+			http.onreadystatechange = function() {
+				if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					const objJSON = JSON.parse(http.responseText);
+					if(objJSON.length>0) {
+						external_user_id.value = objJSON[0].str_id;
+						full_name.value = objJSON[0].full_name;
+						user_name.value = objJSON[0].user_name;
+						password.value = objJSON[0].password;
+						gender.value = objJSON[0].gender;
+						administrator.value = objJSON[0].administrator;
+						activated.value = objJSON[0].activated;
+					}						
+				}
+			}
+			http.send(strJSON);	
+		}
+		function New() {
+			external_user_id.value = 0;
+			full_name.value = "";
+			user_name.value = "";
+			password.value = "";
+			gender.value = "";
+			administrator.value = 0;
+			activated.value = 1;
+			full_name.focus();
+		}
+		function save() {
+			let _id = external_user_id.value.toString().trim();
+			if(_id.length<=0) {_id = "0";}
+			const _full_name = full_name.value.toString().trim();
+			const _user_name = user_name.value.toString().trim();
+			const _password = password.value.toString().trim();
+			const _gender = gender.value.toString().trim();
+			let _administrator = administrator.value.toString().trim();
+			if(_administrator.length<=0) {_administrator = "0";}
+			let _activated = activated.value.toString().trim();
+			if(_activated.length<=0) {_activated = "0";}
+			let params = {};
+			if(Number(_id)>0) {params.id = _id;}
+			if(_full_name.length>0) {params.full_name = _full_name;}
+			if(_user_name.length>0) {params.user_name = _user_name;}
+			if(_password.length>0) {params.password = _password;}
+			if(_gender.length>0) {params.gender = _gender;}
+			if(Number(_administrator)>=0) {params.administrator = Number(_administrator);}
+			if(Number(_activated)>=0) {params.activated = Number(_activated);}
+			const strJSON = JSON.stringify(params);
+			const http = new XMLHttpRequest();
+			let ROUTE = "";
+			if(Number(_id)<=0) {ROUTE = `${DOMAIN}/chatbot/insertUser`;}
+			else {ROUTE = `${DOMAIN}/chatbot/updateUser`;}
+			http.open("POST", ROUTE, true);
+			http.setRequestHeader("Content-Type", "application/json");
+			http.onreadystatechange = function() {
+				if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					const objJSON = JSON.parse(http.responseText);
+					if(objJSON.length>0) {
+						if(objJSON[0] == true) {
+							list();
+							alertTrue();
+						}		
+					}
+				}
+			}
+			http.send(strJSON);			
+		}
+		function Delete() {
+			let _id = external_user_id.value.toString().trim();
+			if(_id.length<=0) {_id = "0";}
+			let params = {};
+			if((_id.length>0)&&(_id!="0")) {params.id = _id;}
+			const strJSON = JSON.stringify(params);
+			const http = new XMLHttpRequest();
+			const ROUTE = `${DOMAIN}/chatbot/deleteUser`;
+			http.open("POST", ROUTE, true);
+			http.setRequestHeader("Content-Type", "application/json");
+			http.onreadystatechange = function() {
+				if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					const objJSON = JSON.parse(http.responseText);
+					if(objJSON.length>0) {
+						if(objJSON[0] == true) {
+							list();
+							New();
+						}		
+					}
+				}
+			}
+			http.send(strJSON);	
+		}
+		function alertFalse() {
+			const Alert = document.getElementById("alert");
+			Alert.style.display = "none";   			
+		}
+		function alertTrue() {
+			const Alert = document.getElementById("alert");
+			Alert.style.display = "block";
+			New();		
+		}		
+	</script>
+	</body>
+</html>

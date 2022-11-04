@@ -1,0 +1,37 @@
+id;external_user_id;relationship_id;question;answer;activated
+2;1;0;Olá!;Olá! Tudo bem?;1
+3;1;2;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+4;1;2;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+5;1;0;Oi!;Oi! Tudo bem?;1
+6;1;5;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+7;1;5;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+8;1;0;Quais são as novidades?;Você gosta de cursos online?;1
+9;1;8;Sim eu gosto.;Legal então confira a nossa página de cursos. Temos lançamentos.;1
+10;1;8;Não, eu não gosto.;Lamento então não temos novidades por enquanto.;1
+11;1;0;Bom dia!;Bom dia para você também!;1
+12;1;0;Boa tarde!;Boa tarde para você também!;1
+13;1;0;Boa noite!;Boa noite para você também!;1
+14;2;0;Olá!;Olá! Tudo bem?;1
+15;2;14;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+16;2;14;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+17;2;0;Oi!;Oi! Tudo bem?;1
+18;2;17;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+19;2;17;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+20;2;0;Quais são as novidades?;Você gosta de cursos online?;1
+21;2;20;Sim eu gosto.;Legal então confira a nossa página de cursos. Temos lançamentos.;1
+22;2;20;Não, eu não gosto.;Lamento então não temos novidades por enquanto.;1
+23;2;0;Bom dia!;Bom dia para você também!;1
+24;2;0;Boa tarde!;Boa tarde para você também!;1
+25;2;0;Boa noite!;Boa noite para você também!;1
+26;3;0;Olá!;Olá! Tudo bem?;1
+27;3;26;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+28;3;26;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+29;3;0;Oi!;Oi! Tudo bem?;1
+30;3;29;Sim! Tudo bem e você?;Que bom, eu estou bem também.;1
+31;3;29;Não. Estou mal.;Que pena. Espero que as coisas melhorem. Comigo está tudo bem.;1
+32;3;0;Quais são as novidades?;Você gosta de cursos online?;1
+33;3;32;Sim eu gosto.;Legal então confira a nossa página de cursos. Temos lançamentos.;1
+34;3;32;Não, eu não gosto.;Lamento então não temos novidades por enquanto.;1
+35;3;0;Bom dia!;Bom dia para você também!;1
+36;3;0;Boa tarde!;Boa tarde para você também!;1
+37;3;0;Boa noite!;Boa noite para você também!;1
